@@ -6,6 +6,13 @@ use stdClass;
 use App\User;
 class DBHelper{
 
+
+    /********************************************************************
+    *                                                                   *
+    *    Method to Insert Data in database call from ApiController      * 
+    *    method when user comes for registration.                       *
+    *                                                                   *
+    ********************************************************************/
     public function insertData($data){
         if(DB::table('users')->where('email','=',$data['email'])->doesntExist()){
             $newData = new User;
@@ -19,15 +26,25 @@ class DBHelper{
         }
     }
 
+    /********************************************************************
+    *                                                                   *
+    *    Method to check user is registered in database or not.         *
+    *                                                                   *
+    ********************************************************************/
     public static function checkUser($value){        
-        $count = DB::table('users')->where('email','=',$value)->exists();
-        return $count;    
+        $res = DB::table('users')->where('email','=',$value)->exists();
+        return $res;    
     }
-    /*
-        Function to get User Details 
-        $on {type: array}
-        token {optional}
-    */
+
+    /********************************************************************
+    *                                                                   *
+    *    Method to  get User Details .                                  *
+    *                                                                   *
+    *       => $on {type: array}                                        *
+    *       => token {optional}                                         *
+    *                                                                   *
+    ********************************************************************/
+    
     public static function getUserDetails($on, $token=null){
         $obj = new stdClass();
         $passdata = array();
@@ -55,10 +72,13 @@ class DBHelper{
         return $data;    
     } 
 
-    /*
-        Function for "whereRaw()" function parameter pass as query
-        ex: "email = ?"
-    */
+
+    /********************************************************************
+    *                                                                   *
+    *    Function for "whereRaw()" function parameter pass as query     *
+    *       =>ex: "email = ?"                                           *
+    *                                                                   *
+    ********************************************************************/
     public static function getRawQuery($on){
         $q = "";
         if(count($on)==1){
@@ -77,7 +97,12 @@ class DBHelper{
         return trim($q);
     }
 
-
+    /********************************************************************
+    *                                                                   *
+    *    Function for update user data already present in databaese     *
+    *       => Method call by ApiController class                       *
+    *                                                                   *
+    ********************************************************************/
     public static function updateUserData($on, $data){
         $passdata = array();
         foreach($on as $k=>$v){
@@ -96,6 +121,14 @@ class DBHelper{
         return false;        
     }
 
+
+    /********************************************************************
+    *                                                                   *
+    *    Function for delete user from databaese                        *
+    *       => {Originally we don't delete data but we                  *
+                set attribute "deleted_at" of that row }                *
+    *                                                                   *
+    ********************************************************************/
     public static function deleteUserData($on){
         $passdata = array();
         foreach($on as $k=>$v){

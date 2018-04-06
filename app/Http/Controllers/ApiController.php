@@ -23,13 +23,16 @@ class ApiController extends Controller
         $obj->status = $vh->validateData($in_data)?1:0;
         if($obj->status == 1){
             $db = new DBHelper;
-            $res= $db->insertData($in_data);
+            $res = $db->insertData($in_data);
             if($res){
+                $obj->status = 1;
                 $obj->message = "User created successful.";
             }else{
+                $obj->status = 0;
                 $obj->message = "Email already exists.";
             }
         }else{
+            $obj->status = 0;
             $obj->message = "Data passed is not validated.";
         }
         return response(json_encode($obj))->header('Content-Type', 'JSON');  
@@ -52,11 +55,11 @@ class ApiController extends Controller
                 $obj->data = $data;
             }else{
                 $obj->status = 0;
-                $obj->message = "Something went wrong";
+                $obj->message = "User profile not exist.";
             }                               
             
         }else{
-            $obj->message = "Can't Login";    
+            $obj->message = "Data Validation Failed... Try again";    
         }         
         return response(json_encode($obj))->header('Content-Type', 'JSON');
     }    
@@ -84,12 +87,19 @@ class ApiController extends Controller
                     if($k!='id' && $k!='email')
                     $data[$k] = $v;
                 }
-                if($dbh->updateUserData($on, $data)){
-                    $obj->status = 1;
-                    $obj->message = "Updated Successfully";
+                $vh = new ValidationHelper;         
+                $obj->status = $vh->validateData($data)?1:0;
+                if($obj->status == 1 ){
+                    if($dbh->updateUserData($on, $data)){
+                        $obj->status = 1;
+                        $obj->message = "Updated Successfully";
+                    }else{
+                        $obj->status = 0;
+                        $obj->message = "User Profile Not Exist.";
+                    }
                 }else{
                     $obj->status = 0;
-                    $obj->message = "User Profile Not Exist.";
+                    $obj->message = "Data Not Validated.";
                 }
             }
         }
@@ -121,4 +131,5 @@ class ApiController extends Controller
         }
         return response(json_encode($obj))->header('Content-Type', 'JSON'); 
     }
+
 }

@@ -1,12 +1,13 @@
 <?php
 namespace App\Http\Controllers\Helper;
 use DB;
+use App\Http\Controllers\Helper\ValidationHelper;
 use stdClass;
 use App\User;
 class DBHelper{
 
     public function insertData($data){
-        if($this->checkUser($data['email']) == 0){
+        if(DB::table('users')->where('email','=',$data['email'])->doesntExist()){
             $newData = new User;
             foreach($data as $k=>$v){
                 $newData->$k = $v;
@@ -19,7 +20,7 @@ class DBHelper{
     }
 
     public static function checkUser($value){        
-        $count = User::where('email','=',$value)->count();
+        $count = DB::table('users')->where('email','=',$value)->exists();
         return $count;    
     }
     /*
@@ -108,4 +109,5 @@ class DBHelper{
         }
         return false;  
     }
+
 }

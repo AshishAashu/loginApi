@@ -4,7 +4,7 @@ class ValidationHelper{
 
     public function validateName($name){
         $name = trim($name);
-        if(preg_match("/^[A-Za-z]+$/",$name,$match)){
+        if(preg_match("/^[A-Za-z ]+$/",$name,$match)){
             return true;
         }
         return false;
@@ -50,7 +50,7 @@ class ValidationHelper{
         $token = '';
         $str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         while(strlen($token)<25){
-            $token = $token.$str[rand(0,61)];
+            $token = $token.$str[mt_rand(0,61)];
         } 
         return $token;
     }
